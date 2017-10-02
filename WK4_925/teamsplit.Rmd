@@ -1,0 +1,49 @@
+---
+title: "EDA Project Team Split"
+author: "Zichun Liu"
+date: "9/29/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(xlsx)
+```
+
+```{r, echo=F}
+team1 = read.xlsx("team1.xlsx",sheetIndex = 1, header = T)
+
+for(i in 1:ncol(team1)){
+  team1[,i] = as.character(team1[,i])
+}
+```
+
+```{r, echo=FALSE}
+tmp = team1 %>% gather(key = team, value = name, team1:team14) %>% na.omit
+
+tmp$name = gsub(pattern = " U", replacement = ", U", x = tmp$name)
+tmp$name = gsub(pattern = " Y", replacement = ", Y", x = tmp$name)
+tmp$name = gsub(pattern = " M", replacement = ", M", x = tmp$name)
+tmp$name = gsub(pattern = " N", replacement = ", N", x = tmp$name)
+tmp$name = gsub(pattern = ",,", replacement = ",", x = tmp$name)
+tmp$name = gsub(pattern = ", Ma", replacement = " Ma", x = tmp$name)
+tmp$name = gsub(pattern = ", Yu", replacement = " Yu", x = tmp$name)
+tmp$name = gsub(pattern = ", Mo", replacement = " Mo", x = tmp$name)
+tmp$name = gsub(pattern = "MSSP", replacement = "Y", x = tmp$name)
+tmp$team = gsub(pattern = "team.13", replacement = "team13", tmp$team)
+
+tmp = separate(data = tmp, col = name, into = c("name", "BUID", "MSSP"),sep = ",",remove = T)
+
+```
+
+```{r,results='asis',echo=FALSE, }
+for(i in 1:14){
+  print(kable(tmp[tmp$team == paste("team", i, sep = ""),][,-1], row.names = F, caption = tmp[tmp$team == paste("team", i, sep = ""),][1,1], align = "c"))  
+}
+```
+

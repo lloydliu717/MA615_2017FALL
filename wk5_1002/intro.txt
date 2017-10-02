@@ -1,0 +1,9 @@
+1. quickly go through git
+
+-- 1.0 basic command (add/commit/push/)
+
+-- 1.1 create project and sync to github
+
+-- 1.2 download existing project from github
+
+-- 1.3 git reset --hard HEAD^

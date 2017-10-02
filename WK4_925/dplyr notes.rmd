@@ -1,0 +1,96 @@
+---
+title: "dplyr"
+author: ""
+date: "September 22, 2017"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(nycflights13)
+library(tidyverse)
+```
+
+## Data Manipulation
+
+Pick observations by their values (filter()).  
+
+Reorder the rows (arrange()).  
+
+Pick variables by their names (select()).  
+
+Create new variables with functions of existing variables (mutate()).
+
+Collapse many values down to a single summary (summarise()).
+
+## All verbs work similarly:  
+
+The first argument is a data frame.  
+
+The subsequent arguments describe what to do with the data frame, using the variable names (without quotes).  
+
+The result is a new data frame.  
+
+## OK, but what is a tibble?
+
+[Look here for everything you want to know](http://bit.ly/2ffxvfM)  
+
+
+Moving on with dplyr ...  
+
+## filter()
+
+filter() allows you to subset observations based on their values.
+
+```{r}
+filter(flights, month == 1, day == 1)
+
+```
+
+
+## R either prints out the results, or saves them to a variable.
+
+If you want to do both, you can wrap the assignment in parentheses:
+
+```{r}
+(jan1 <- filter(flights, month == 1, day == 1))
+
+```
+
+## NA -- key knowledge for statisticians
+
+```{r}
+NA > 5
+
+10 == NA
+
+NA + 10
+
+NA / 2
+
+## -------------------
+
+NA == NA
+
+```
+
+## arrange()
+
+arrange() works similarly to filter()   
+except that instead of selecting rows,   
+it changes their order.
+
+```{r}
+arrange(flights, year, month, day)
+```
+
+
+## desc()
+
+Use desc() to re-order by a column in descending order:
+
+```{r}
+arrange(flights, desc(arr_delay))
+```
+
+

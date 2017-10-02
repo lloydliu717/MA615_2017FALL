@@ -1,0 +1,115 @@
+---
+title: "Untitled"
+author: "Zichun Liu"
+date: "9/25/2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(nycflights13)
+library(microbenchmark)
+library(dplyr)
+library(tidyr)
+```
+
+
+```{r}
+microbenchmark(
+  filter(flights, month == 1, day == 1),
+  subset(flights, subset = month == 1 & day ==1)
+)
+```
+
+
+```{r}
+#select 
+flights %>% 
+  select(month, day, carrier, distance)
+```
+
+```{r}
+#filter
+flights %>% 
+  select(month, day, carrier, distance) %>% 
+  filter(month == 1, day == 1)
+```
+
+```{r}
+# group_by and summarise
+flights %>% 
+  select(month, day, carrier, distance) %>% 
+  filter(month == 1, day == 1) %>% 
+  group_by(carrier) %>% 
+  summarise(mean(distance),n())
+```
+
+
+```{r}
+#arrange()
+flights %>% 
+  select(month, day, carrier, distance) %>% 
+  filter(month == 1, day == 1) %>% 
+  group_by(carrier) %>% 
+  summarise(meandistance = mean(distance),n()) %>%
+  arrange(meandistance)
+```
+
+```{r}
+# mutate
+flights %>% 
+  select(month, day, carrier, distance) %>% 
+  filter(month == 1, day == 1) %>% 
+  group_by(carrier) %>% 
+  summarise(meandistance = mean(distance), N = n()) %>%
+  arrange(meandistance) %>%
+  mutate(totaldistance = meandistance*N)
+```
+
+```{r}
+# join
+flight_1 = flights %>% 
+  select(month, day, carrier, distance) %>% 
+  filter(month == 1, day == 1) %>% 
+  group_by(carrier) %>% 
+  summarise(meandistance = mean(distance), N = n()) %>%
+  arrange(meandistance) %>%
+  mutate(totaldistance = meandistance*N, rank = 1:length(meandistance))
+
+
+flight_2 = flights %>%
+  select(month, day, carrier,air_time) %>%
+  filter(month == 1, day == 1) %>% 
+  group_by(carrier) %>%
+  summarise(meanairtime = mean(air_time)) %>%
+  na.omit()
+
+inner_join(flight_1, flight_2, "carrier")
+left_join(flight_1, flight_2, "carrier")
+semi_join(flight_1, flight_2, "carrier")
+anti_join(flight_1, flight_2, "carrier")
+```
+
+
+```{r}
+library(ggplot2)
+flights %>% 
+  select(month, day, carrier, distance) %>% 
+  filter(month == 1, day == 1) %>% 
+  group_by(carrier) %>% 
+  summarise(meandistance = mean(distance), N = n()) %>%
+  arrange(meandistance) %>%
+  mutate(totaldistance = meandistance*N, rank = 1:length(meandistance)) %>%
+  ggplot() + 
+  geom_bar(aes(x = carrier, y = meandistance, fill = N), stat = "identity")
+
+
+inner_join(flight_1, flight_2, "carrier") %>%
+  ggplot() + 
+  geom_point(aes(x = meandistance, y = meanairtime, col = carrier)) + 
+  geom_smooth(aes(x = meandistance, y = meanairtime), method = "lm", lwd = 0.5)
+```
+
+##
